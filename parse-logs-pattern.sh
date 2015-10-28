@@ -1,6 +1,6 @@
 !/bin/bash
 
-# This script parse $logfile with $find_pattern cat finded line and next 10 lines after each fin result
+# This script parse $logfile with $find_pattern
 
 # logfile location
 logfile="/tmp/test.log"
