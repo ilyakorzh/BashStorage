@@ -2,10 +2,10 @@
 
 # This script parse $logfile with $find_pattern
 # How-to use:
-# sh parse-log-pattern.sh <path to log file> <find pattern string>
+# sh parse-log-pattern.sh <path to log file> <find pattern string> 
  
 # logfile location
-logfile=41
+logfile=$1
 
 #
 find_pattern=$2
