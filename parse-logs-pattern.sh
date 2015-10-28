@@ -1,12 +1,14 @@
 !/bin/bash
 
 # This script parse $logfile with $find_pattern
-
+# How-to use:
+# sh parse-log-pattern.sh <path to log file> <find pattern string>
+ 
 # logfile location
-logfile="/tmp/test.log"
+logfile=41
 
 #
-find_pattern="Unable to connect REST API"
+find_pattern=$2
 
 #check file exist
 if [ -f $logfile ];
