@@ -4,7 +4,7 @@
 # How-to use:
 # sh parse-log-pattern.sh <path to log file> <find pattern string> 
  
-# logfile location
+# logfile location variable
 logfile=$1
 
 #
