@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 # This script parse $logfile with $find_pattern
 # How-to use:

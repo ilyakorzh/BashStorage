@@ -1,3 +1,3 @@
-!/bin/bash
+#!/bin/bash
 
-echo "Test!" > log.txt
+echo "Test!" > /tmp/log.txt
