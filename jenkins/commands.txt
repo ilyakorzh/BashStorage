@@ -1,3 +1,11 @@
+клиентская часть - Антон
+Сергей - бекенд
+Егор - паймент
+Валентин - архитектура
+узнать у Валентина деплой ВМ на сервера -> свич на мой экземпляр -> конверт в Докерс+АВС
+Андрей - по Докеру деплой CI методы
+бекап проверить
+
 "install git":
 
 1) sudo apt-get install -y git
@@ -43,9 +51,18 @@ generate ssh key for GitHub:
 
 "add new plugins":
 
-Backup plugin
+Log Parser Plugin
+ThinBackup
 Job Config History Plugin
 Publish Over SSH
+Kubernetes plugin	
+Docker Commons Plugin
+Docker plugin
+CloudBees Docker Workflow
+Docker build step plugin
+CloudBees Docker Build and Publish plugin
+Amazon Web Services SDK	
+Amazon EC2 Container Service plugin
 
 
 "list plugins":
@@ -99,3 +116,49 @@ grep -n "jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024" java.security
 sed -i -e 's/jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024/jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 512/g' java.security
 
 service jenkins restart
+
+
+"regular salt provision":
+
+sudo salt-call --local state.highstate -l debug
+
+
+"Maven add repo"
+nano /maven/settings.xml
+   <server>
+      <id>URLtoRepo</id>
+      <username>repouser</username>
+      <password>repopwd</password>
+    </server>
+#check repo
+mvn archetype:create -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-webapp -DgroupId=nl.iteye -DartifactId=App1 
+
+cd App1
+
+
+"backup":
+
+/opt/backups
+set 'write group' & 'write others' permissions
+
+
+"create folder for scripts (synced)":
+/usr/scripts/cityodds
+copy and chmod +x all scripts:
+cx-run-amazon-env-kaizen.sh
+publish_cityodds_users.sh
+ws-tests.sh
+
+
+"create folder for artifacts Users":
+mkdir /var/lib/hudson 
+chmod 40777 /var/lib/hudson
+
+"change scripts":
+ws-tests.sh
+
+#before 
+workspace=/var/lib/hudson/jobs/$1/workspace
+
+#after
+workspace=/var/lib/jenkins/jobs/$1/workspace
