@@ -161,6 +161,29 @@ workspace=/var/lib/hudson/jobs/$1/workspace
 #after
 workspace=/var/lib/jenkins/jobs/$1/workspace
 
+#Maven jobs with docker:
+clean install -Pdocker -Ddocker.image.tag=$RELEASE_VERSION -DpushImage=true
+
+
+# manual start docker 
+docker -H tcp://0.0.0.0:4243 -d
+
+# Variables for Jenkins jobs
+echo RELEASE_VERSION=`date +"%Y%m%d"`-r$BUILD_NUMBER
+
+vim /etc/systemd/system/multi-user.target.wants/docker.service
+
+#ExecStart=/usr/bin/docker daemon -H fd://
+ExecStart=/usr/bin/docker daemon -H tcp://0.0.0.0:4243
+
+service docker start
+
+# maven skip tests for test docker publish to registry
+clean install  -Pdocker -Dmaven.test.skip=true -Ddocker.image.tag=$RELEASE_VERSION -DpushImage=true
+
+#convert Amazon ws keys to private
+puttygen ilyakorzh_public.pem -O private-openssh -o ilyakorzh_private.ppk
+
 #Vagrant for AWS
 export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
 apt-get install libxslt-dev libxml2-dev build-essential
