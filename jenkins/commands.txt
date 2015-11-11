@@ -3,6 +3,13 @@
 1) sudo apt-get install -y git
 
 
+"add Jenkins repo & install & upgrade":
+wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ >> /etc/apt/sources.list.d'
+apt-get update
+apt-get install jenkins
+
+
 "load jenkins-cli":
 
 wget http://localhost:8084/jnlpJars/jenkins-cli.jar 
@@ -161,6 +168,30 @@ workspace=/var/lib/hudson/jobs/$1/workspace
 #after
 workspace=/var/lib/jenkins/jobs/$1/workspace
 
+
+#create folder for ssh-keys:
+mkdir /var/lib/jenkins/ssh-keys/
+
+#copy keys from old jenkins
+scp -r ikorzh@jenkins-cityodds:/var/lib/jenkins/jobs/ /home/aws/jobs/
+
+#replace key path in all jobs
+grep -rl 'key=/var/lib/jenkins' /home/aws/jobs/ | xargs sed -i 's/key=\/var\/lib\/jenkins/key=\/var\/lib\/jenkins\/ssh-keys/g'
+
+
+#NodeJS
+curl -sL https://deb.nodesource.com/setup | bash -
+apt-get install -y nodejs
+apt-get install -y build-essential
+npm install -g node-gyp
+npm install -g gulp
+
+#fix nodejs jobs Error: Module did not self-register.
+apt-get purge nodejs
+apt-get install -y nodejs
+#rubn Jenkins job
+
+
 #Maven jobs with docker:
 clean install -Pdocker -Ddocker.image.tag=$RELEASE_VERSION -DpushImage=true
 
@@ -194,3 +225,20 @@ vagrant plugin install vagrant-salt
 
 #Vagrant run AWS
 vagrant up --provider=aws
+
+# Deb 7.8 SALT prereq.
+
+wget -q -O- "http://debian.saltstack.com/debian-salt-team-joehealy.gpg.key" | apt-key add -
+
+echo "deb http://debian.saltstack.com/debian wheezy-saltstack main" >> /etc/apt/sources.list
+
+apt-get update
+
+salt.bootstrap_options = "-D -c /tmp"
+
+#Add key for Common.sh 
+/var/lib/jenkins/id_rsa_cityodds_test
+# add host for test to know host list
+???
+# after copy set chmod 444 on key (read to all)
+chmod 444 /var/lib/jenkins/id_rsa_cityodds_test
