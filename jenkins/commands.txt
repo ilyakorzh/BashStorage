@@ -199,6 +199,9 @@ clean install -Pdocker -Ddocker.image.tag=$RELEASE_VERSION -DpushImage=true
 # manual start docker 
 docker -H tcp://0.0.0.0:4243 -d
 
+# for use Docker command need export DOCKER_HOST
+export DOCKER_HOST=tcp://0.0.0.0:4243
+
 # Variables for Jenkins jobs
 echo RELEASE_VERSION=`date +"%Y%m%d"`-r$BUILD_NUMBER
 
@@ -238,7 +241,7 @@ salt.bootstrap_options = "-D -c /tmp"
 
 #Add key for Common.sh 
 /var/lib/jenkins/id_rsa_cityodds_test
-# add host for test to know host list
-???
+# add host for test to known host list
+/.ssh/known_hosts
 # after copy set chmod 444 on key (read to all)
 chmod 444 /var/lib/jenkins/id_rsa_cityodds_test
