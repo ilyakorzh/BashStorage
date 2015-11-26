@@ -169,6 +169,16 @@ workspace=/var/lib/hudson/jobs/$1/workspace
 workspace=/var/lib/jenkins/jobs/$1/workspace
 
 
+#create folder for deploy Selenium test to Jenkins host\
+mkdir /var/www/html/ws-test-reports-payapi
+
+chmod 777 -r /var/www/html/ws-test-reports-payapi
+
+# modify /etc/apache2/conf.d/hudson.conf
+ProxyPass /ws-test-reports-payapi !
+Alias /ws-test-reports-payapi /var/www/html/ws-test-reports-payapi
+
+
 #create folder for ssh-keys:
 mkdir /var/lib/jenkins/ssh-keys/
 
@@ -200,7 +210,7 @@ clean install -Pdocker -Ddocker.image.tag=$RELEASE_VERSION -DpushImage=true
 docker -H tcp://0.0.0.0:4243 -d
 
 # for use Docker command need export DOCKER_HOST
-export DOCKER_HOST=tcp://0.0.0.0:4243
+export DOCKER_HOST=tcp://localhost:4243
 
 # Variables for Jenkins jobs
 echo RELEASE_VERSION=`date +"%Y%m%d"`-r$BUILD_NUMBER
@@ -214,6 +224,13 @@ service docker start
 
 # maven skip tests for test docker publish to registry
 clean install  -Pdocker -Dmaven.test.skip=true -Ddocker.image.tag=$RELEASE_VERSION -DpushImage=true
+
+# Save Docker Hub registry creds
+cp /home/user/.docker/config.json /var/lib/jenkins/.docker/config.json
+su jenkins
+export DOCKER_HOST=tcp://localhost:4243
+docker login <username>
+
 
 #convert Amazon ws keys to private
 puttygen ilyakorzh_public.pem -O private-openssh -o ilyakorzh_private.ppk
