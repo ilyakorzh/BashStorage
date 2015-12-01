@@ -209,16 +209,14 @@ clean install -Pdocker -Ddocker.image.tag=$RELEASE_VERSION -DpushImage=true
 # manual start docker 
 docker -H tcp://0.0.0.0:4243 -d
 
-# for use Docker command need export DOCKER_HOST
+# for use Docker command need export DOCKER_HOST & DOCKER_OPTS
 export DOCKER_HOST=tcp://localhost:4243
+export DOCKER_OPTS="-H 0.0.0.0:4243 -H unix:///var/run/docker.sock" 
 
 # Variables for Jenkins jobs
 echo RELEASE_VERSION=`date +"%Y%m%d"`-r$BUILD_NUMBER
 
-vim /etc/systemd/system/multi-user.target.wants/docker.service
 
-#ExecStart=/usr/bin/docker daemon -H fd://
-ExecStart=/usr/bin/docker daemon -H tcp://0.0.0.0:4243
 
 service docker start
 
@@ -227,9 +225,29 @@ clean install  -Pdocker -Dmaven.test.skip=true -Ddocker.image.tag=$RELEASE_VERSI
 
 # Save Docker Hub registry creds
 cp /home/user/.docker/config.json /var/lib/jenkins/.docker/config.json
+
+#Install alternative
+curl -sSL https://get.docker.com/ | sh
 su jenkins
 export DOCKER_HOST=tcp://localhost:4243
+#or
+export DOCKER_HOST=tcp://0.0.0.0:4243
+
+# edit services
+nano /etc/systemd/system/multi-user.target.wants/docker.service
+
+#ExecStart=/usr/bin/docker daemon -H fd://
+ExecStart=/usr/bin/docker daemon -H tcp://0.0.0.0:4243 -H unix:///var/run/docker.sock
+
+systemctl daemon-reload
+
+systemctl start docker
+systemctl status docker
+systemctl enable docker
+
+# test registry DockerHub
 docker login <username>
+
 
 
 #convert Amazon ws keys to private
